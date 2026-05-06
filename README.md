@@ -1,79 +1,225 @@
-# Weld Defect Detection (DEPI)
-=====================
+# Credit Card Fraud Detection
+# ============================
 
 # Overview
---------
+# --------
+# This project focuses on developing a machine learning solution to detect fraudulent credit card transactions.
+# The system classifies each transaction as either "Not Fraud" or "Fraud" using transaction details,
+# customer information, merchant information, and engineered features.
+#
+# The main challenge in this project is the severe class imbalance, where most transactions are normal
+# and only a small percentage are fraudulent.
+#
+# To solve this problem, the project uses:
+#   - Imbalance handling techniques
+#   - Probability-based prediction
+#   - Threshold tuning
 
-This project focuses on developing a computer vision solution to detect and classify welding defects, ensuring improved quality control in welding processes. The system identifies welding quality as **Good Welding**, **Bad Welding**, or detects specific defects like **Porosity** and **Defect**.
 
 # Features
---------
+# --------
+# - Fraud Classification Model:
+#     Detects whether a transaction is Fraud or Not Fraud.
+#
+# - Imbalance Handling:
+#     Uses class_weight, scale_pos_weight, and optional SMOTE to improve fraud detection.
+#
+# - Feature Engineering:
+#     Creates useful features such as transaction hour, customer age, log amount,
+#     and distance between customer and merchant.
+#
+# - Threshold Tuning:
+#     Adjusts the fraud decision threshold to avoid predicting only Not Fraud.
+#
+# - Suspicious Transaction Ranking:
+#     Ranks transactions by fraud probability for investigation and review.
+#
+# - Model Comparison:
+#     Compares Logistic Regression, Random Forest, XGBoost, and SMOTE-based models.
 
-*   **YOLOv5-based Model**: Utilized YOLOv5 for object detection to ensure efficient and accurate classification.
-*   **Unified Dataset**: Preprocessed and merged **6 different datasets** into a single comprehensive dataset.
-*   **Interactive Web App**: Deployed the model using **Streamlit** for real-time defect detection and visualization.
 
-# Model Performance  
-| Metric        | Value  |  
-|---------------|--------|  
-| **mAP50**     | 0.934  |  
+# Model Performance
+# -----------------
+# Best Model:                 XGBoost Weighted
+# Maximum Fraud Probability:  0.999595
+# Mean Fraud Probability:     0.024993
+# Median Fraud Probability:   0.001150
 
-## Class-wise Performance  
-| Class          | Precision | Recall | mAP50 |  
-|----------------|-----------|--------|-------|  
-| **Defect**     | 0.957     | 0.942  | 0.967 |  
-| **Good Welding** | 0.736   | 0.830  | 0.839 |  
-| **Porosity**   | 0.910     | 0.918  | 0.962 |  
-| **Bad Welding** | 0.928   | 0.911  | 0.969 |  
+
+# Top Suspicious Transactions
+# ---------------------------
+# Fraud Probability    Actual
+# ------------------   ------
+# 0.999595             1
+# 0.999588             1
+# 0.999579             1
+# 0.999564             1
+# 0.999563             1
+#
+# The top suspicious transactions were actual fraud cases.
+# This confirms that the model is able to detect real fraudulent transactions
+# and is not predicting only the majority class.
 
 
 # Installation
-------------
+# ------------
+# 1. Clone the repository:
 
-1.  Clone the repository:
-    
-    ```bash
-    git clone https://github.com/zyad-ashraf-amar/welding-detection-DEPI.git  
-    cd weld-defect-detection  
-    ```
+git clone https://github.com/YOUR_USERNAME/credit-card-fraud-detection.git
+cd credit-card-fraud-detection
 
-2.  Download the pre-trained YOLOv5 weights and place them in the appropriate directory.
-    
+# 2. Install the required libraries:
+
+pip install pandas numpy matplotlib scikit-learn xgboost imbalanced-learn
+
 
 # Usage
------
+# -----
+# 1. Open the Kaggle Notebook.
+#
+# 2. Add the dataset from Kaggle:
+#      Credit Card Transactions Fraud Detection
+#
+# 3. Make sure the dataset contains:
+#      fraudTrain.csv
+#      fraudTest.csv
+#
+# 4. Run all notebook cells from top to bottom.
+#
+# 5. The model will train and generate:
+#      - Prediction results
+#      - Model comparison tables
+#      - Threshold analysis
+#      - Suspicious transaction rankings
 
-1.  Run the Streamlit app:
-    
-    ```bash
-    streamlit run app4.py  
-    ```
-    
-2.  Upload welding images and view real-time defect detection results.
-    
 
 # Dataset
--------
+# -------
+# Dataset name:
+#   Credit Card Transactions Fraud Detection
+#
+# Dataset link:
+#   https://www.kaggle.com/datasets/kartik2112/fraud-detection
+#
+# Main files:
+#   fraudTrain.csv
+#   fraudTest.csv
+#
+# Target column:
+#   is_fraud
+#
+# Target meaning:
+#   0 = Not Fraud
+#   1 = Fraud
 
-The dataset is a combination of **6 different datasets** preprocessed into a unified format for training. Details on preprocessing steps can be found in the `notebooks` folder.
+
+# Feature Engineering
+# -------------------
+# The following features were created to improve model performance:
+#
+#   trans_hour       : Transaction hour
+#   trans_dayofweek  : Transaction day of week
+#   trans_month      : Transaction month
+#   trans_day        : Transaction day
+#   age              : Customer age
+#   amt_log          : Log transformation of transaction amount
+#   distance_km      : Distance between customer and merchant
+
+
+# Models
+# ------
+# The project trains and compares the following models:
+#
+#   - Dummy Classifier
+#   - Logistic Regression
+#   - Random Forest
+#   - XGBoost
+#   - SMOTE + Logistic Regression
+
+
+# Imbalance Handling
+# ------------------
+# The dataset is highly imbalanced, so the project uses several techniques
+# to improve fraud detection:
+#
+#   - class_weight="balanced" in Logistic Regression
+#   - class_weight="balanced_subsample" in Random Forest
+#   - scale_pos_weight in XGBoost
+#   - Optional SMOTE oversampling
+#   - Probability-based prediction using predict_proba
+#   - Decision threshold tuning
+
+
+# Threshold Tuning
+# ----------------
+# The default classification threshold is usually 0.5.
+# In fraud detection, this threshold may be too high because fraud cases are rare.
+#
+# This project uses predicted fraud probabilities and selects a better threshold
+# based on model performance.
+
+# Example:
+# y_proba = model.predict_proba(X_test)[:, 1]
+# y_pred = (y_proba >= best_threshold).astype(int)
+
+# This helps the model detect fraud transactions instead of predicting only Not Fraud.
+
 
 # Results
--------
+# -------
+# The best model was the XGBoost Weighted Model.
+# It successfully assigned high fraud probabilities to real fraudulent transactions.
+#
+# Example:
+#   Fraud Probability: 0.999595
+#   Actual:            1
+#
+# This proves that the model can identify fraud transactions with high confidence.
 
-The model provides robust performance, achieving a **mAP50 of 0.934**, ensuring accurate defect detection across all defined classes.
+
+# Output Files
+# ------------
+# The notebook saves the following files:
+#
+#   fraud_detection_model_comparison.csv
+#   fraud_detection_feature_importance.csv
+#   fraud_detection_threshold_comparison.csv
+#   top_suspicious_transactions.csv
+#
+# Saved location in Kaggle:
+#   /kaggle/working/
+
+
+# Technologies Used
+# -----------------
+#   - Python
+#   - Pandas
+#   - NumPy
+#   - Matplotlib
+#   - Scikit-learn
+#   - XGBoost
+#   - Imbalanced-learn
+#   - Kaggle Notebook
+
 
 # Future Enhancements
--------------------
+# -------------------
+#   - Use LightGBM and compare it with XGBoost.
+#   - Apply advanced hyperparameter tuning.
+#   - Add SHAP explainability for model interpretation.
+#   - Build a Streamlit web app for fraud prediction.
+#   - Deploy the model as a real-time API.
+#   - Add customer transaction history and velocity-based features.
+#   - Use business cost-based threshold optimization.
 
-*   Optimize the model for edge devices to enable real-time deployment on welding machines.
-*   Extend the dataset with more diverse examples to improve robustness.
 
-## Contributing
-------------
+# Contributing
+# ------------
+# Contributions are welcome.
+# Feel free to fork the repository and submit a pull request.
 
-Contributions are welcome! Feel free to fork the repository and submit a pull request.
 
-## Contact
--------
-
-For any inquiries, reach out to zyadashrafamar@gmail.com.
+# Contact
+# -------
+# For any inquiries, reach out to:
+#   YOUR_EMAIL@example.com
